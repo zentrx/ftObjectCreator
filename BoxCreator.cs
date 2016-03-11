@@ -56,8 +56,6 @@ namespace loadTestingPhysicalCreator
             using (SqlConnection conn = new SqlConnection())
             {
                 SqlConnectionStringBuilder connString = new SqlConnectionStringBuilder();
-                //connString.DataSource = "FTSERVER\\SQL2014";
-                //connString.InitialCatalog = "FT_LoadTest_Imports";
                 connString.DataSource = "(local)\\FILETRAIL";
                 connString.InitialCatalog = "LoadTest_Items";
                 connString.IntegratedSecurity = true;
@@ -161,8 +159,6 @@ namespace loadTestingPhysicalCreator
             {
                 #region conn.Open();
                 SqlConnectionStringBuilder connString = new SqlConnectionStringBuilder();
-                //connString.DataSource = "FTSERVER\\SQL2014";
-                //connString.InitialCatalog = "FT_LoadTest_Imports";
                 connString.DataSource = "(local)\\FILETRAIL";
                 connString.InitialCatalog = "LoadTest_Items";
                 connString.IntegratedSecurity = true;

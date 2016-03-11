@@ -8,7 +8,7 @@ namespace loadTestingPhysicalCreator {
     class Builder {
         public static void Main(String[] args) {
             BoxCreator b = new BoxCreator();
-            b.GenerateBoxes();
+            b.Generate();
         }
     }
 }

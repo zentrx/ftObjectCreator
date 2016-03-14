@@ -14,7 +14,6 @@ using System.Windows;
 namespace loadTestingPhysicalCreator
 {
     class BoxCreator : PhysicalCreator {
-        
         public ConcurrentQueue<Box> qBoxesToAdd = new ConcurrentQueue<Box>();
         public BoxCreator() {
             this.fileName = "\\Box_LoadTest_1.csv";
@@ -46,25 +45,25 @@ namespace loadTestingPhysicalCreator
             return boxStructure.ToString();
         }
 
-        public override void Produce()
-        {
+        /// <summary>
+        /// Producer -- Creates boxes based on data to be enqueued
+        /// </summary>
+        public override void Produce() {
             Random gen = new Random();
-            DateTime start = new DateTime(1990, 1, 1);
+            DateTime start = new DateTime(1990, 1, 1); 
+            int range = (DateTime.Today - start).Days; 
+            int count = 0; //unique count of progress inside Box creator. uniqueId is global.
 
-            int range = (DateTime.Today - start).Days;
-            int count = 0;
-
-            while (count < numberGenerated)
-            {
-                qBoxesToAdd.Enqueue(new Box(data, indexer, id + 1, start, range, gen));
-                count++; id++;
+            while (count < numberGenerated) {
+                qBoxesToAdd.Enqueue(new Box(data, indexer, count++, ++uniqueId, start, range, gen));
                 if (count % 1000 == 0) Console.WriteLine(count + " entries produced");
             }
         }
-        public override void Consume()
-        {
-            using (SqlConnection conn = new SqlConnection())
-            {
+        /// <summary>
+        /// Consumer -- Multiple instances import data from Produced queue to SQL
+        /// </summary>
+        public override void Consume() {
+            using (SqlConnection conn = new SqlConnection()) {
                 #region conn.Open();
                 SqlConnectionStringBuilder connString = new SqlConnectionStringBuilder();
                 connString.DataSource = "(local)\\FILETRAIL";
@@ -77,12 +76,9 @@ namespace loadTestingPhysicalCreator
                 StringBuilder sql = new StringBuilder();
                 Box box = new Box();
                 int waitCounts = 0;
-                while (true)
-                {
-                    if (qBoxesToAdd.TryDequeue(out box))
-                    {
-                        try
-                        {
+                while (true) {
+                    if (qBoxesToAdd.TryDequeue(out box)) {
+                        try {
                             sql = new StringBuilder();
                             sql.Append("insert into boxes (usr, org, cat, med, inactiveStor, activeStor, barcode, rfid, fileDate, description, memo1, storType, storName)").Append(Environment.NewLine);
                             sql.Append("Values ('").Append(box.username).Append("', '").Append(box.org).Append("', '").Append(box.cat).Append("', '").Append(box.med).Append("', '");
@@ -97,10 +93,8 @@ namespace loadTestingPhysicalCreator
                         }
                         catch (Exception e) { Console.WriteLine(e.ToString()); }
                     }
-                    else
-                    {
-                        if (waitCounts <= 3)
-                        {
+                    else {
+                        if (waitCounts <= 3) {
                             Thread.Sleep(2000);
                             waitCounts += 1;
                         }

@@ -48,7 +48,7 @@ namespace loadTestingPhysicalCreator {
         public string table = "";
         public int numberGenerated = 0;
         public int percent = 0;
-        public static int id = 0;
+        public static int uniqueId = 0;
         #endregion creationData
 
         public void EstablishData() {

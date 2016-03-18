@@ -89,7 +89,7 @@ namespace loadTestingPhysicalCreator
                             SqlCommand cmd = new SqlCommand(sql.ToString(), conn);
                             cmd.ExecuteNonQuery();
                             percent++;
-                            if (percent % 20000 == 0) Console.WriteLine(percent / 20000 + "% completed..." + Environment.NewLine);
+                            if (percent % 20000 == 0) Percentage(percent, this.numberGenerated);
                         }
                         catch (Exception e) { Console.WriteLine(e.ToString()); }
                     }
@@ -101,6 +101,7 @@ namespace loadTestingPhysicalCreator
                         else break;
                     }
                 }
+                conn.Close();
             }
         }
     }

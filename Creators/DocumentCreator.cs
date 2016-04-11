@@ -17,6 +17,7 @@ namespace loadTestingPhysicalCreator
     class DocumentCreator : PhysicalCreator
     {
         public ConcurrentQueue<Document> qDocsToAdd = new ConcurrentQueue<Document>();
+
         public DocumentCreator() {
             this.fileName = "";
             this.table = "documents";
@@ -106,16 +107,18 @@ namespace loadTestingPhysicalCreator
                     if (qDocsToAdd.TryDequeue(out doc)) {
                         try {
                             sql = new StringBuilder();
-                            sql.Append("insert into boxes (usr, org, cat, med, inactiveStor, activeStor, barcode, rfid, fileDate, description, memo1, storType, storName)").Append(Environment.NewLine);
+                            sql.Append("insert into documents (usr, org, cat, med, inactiveStor, activeStor, barcode, rfid, fileDate, description, memo1, storType, storName, parentId, singleCom, multiCom, bool, name, phone, singleML, multiML)").Append(Environment.NewLine);
                             sql.Append("Values ('").Append(doc.username).Append("', '").Append(doc.org).Append("', '").Append(doc.cat).Append("', '").Append(doc.med).Append("', '");
                             sql.Append(doc.inactiveStorage).Append("', '").Append(doc.activeStorage).Append("', '").Append(doc.barcode).Append("', '").Append(doc.rfid).Append("', '");
                             sql.Append(doc.fileDate).Append("', '").Append(doc.description).Append("', '").Append(doc.memo1).Append("', '").Append(doc.storType).Append("', '");
-                            sql.Append(doc.storName).Append("');").Append(Environment.NewLine);
+                            sql.Append(doc.storName).Append("', '").Append(doc.parentId).Append("', '").Append(doc.singleCom).Append("', '").Append(doc.multiCom).Append("', '");
+                            sql.Append(doc.boolean.ToString()).Append("', '").Append(doc.name).Append("', '").Append(doc.phone).Append("', '").Append(doc.singleML).Append("', '");
+                            sql.Append(doc.multiML).Append("');").Append(Environment.NewLine);
 
                             SqlCommand cmd = new SqlCommand(sql.ToString(), conn);
                             cmd.ExecuteNonQuery();
                             percent++;
-                            if (percent % 20000 == 0) Console.WriteLine(percent / 20000 + "% completed..." + Environment.NewLine);
+                            if (percent % 100000 == 0) Percentage(percent, this.numberGenerated);
                         }
                         catch (Exception e) { Console.WriteLine(e.ToString()); }
                     }
@@ -127,6 +130,7 @@ namespace loadTestingPhysicalCreator
                         else break;
                     }
                 }
+                conn.Close();
             }
         }
     }

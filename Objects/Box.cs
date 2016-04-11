@@ -12,8 +12,7 @@ using System.IO;
 using System.Windows;
 
 
-namespace loadTestingPhysicalCreator
-{
+namespace loadTestingPhysicalCreator{
     class Box : Physical {
         public Box() {
             this.username = "";
@@ -39,6 +38,7 @@ namespace loadTestingPhysicalCreator
 
             this.inactiveStorage = data[4][count % indexer[4]].Trim();
             this.activeStorage = data[5][count % indexer[5]].Trim();
+            
             this.description = data[6][count % indexer[6]].Trim();
             this.memo1 = data[7][count % indexer[7]].Trim();
 
@@ -46,8 +46,7 @@ namespace loadTestingPhysicalCreator
             this.fileDate = start.AddDays(gen.Next(range));
             this.rfid = id.ToString("X24");
 
-            if (count % 4 == 0)
-            {
+            if (count % 4 == 0) {
                 this.storType = "Active Storage";
                 this.storName = this.activeStorage;
             }

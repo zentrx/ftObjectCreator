@@ -99,6 +99,10 @@ namespace loadTestingPhysicalCreator
             catch (ThreadStateException e) { Console.WriteLine(e); }
             catch (ThreadInterruptedException e) { Console.WriteLine(e); }
         }
+        public void Percentage(int current, int total) {
+            Console.WriteLine(String.Concat((current / total).ToString("00.00%"), " completed...", Environment.NewLine));
+        }
     }
+    public delegate void AsyncGenerate();
 
 }

@@ -16,7 +16,8 @@ namespace loadTestingPhysicalCreator {
         public int volume;
         public string multiML;
         public string singleML;
-        
+
+        public int global = 0;
         private int client = 0;
         #endregion Folder Specific Values
 
@@ -67,9 +68,9 @@ namespace loadTestingPhysicalCreator {
             this.singleCom = data[8][global % indexer[8]].Trim(); //check number
             this.multiCom = String.Concat(data[8][global % indexer[8]].Trim(), "^", data[8][(global + gen.Next() % 8365) % indexer[8]].Trim());
             this.client = gen.Next() % 10000;
-            this.singleML = String.Concat(client, "//", (client % 50) * 50 + gen.Next() % 50);
+            this.singleML = String.Concat(client, "//", ((int)(client / 2000) * 50 + gen.Next() % 50));
             this.client = gen.Next() % 10000;
-            this.multiML = String.Concat(client, "//", (client % 50) * 50 + gen.Next() % 50, "^", this.singleML);
+            this.multiML = String.Concat(client, "//", ((int)(client / 2000) * 50 + gen.Next() % 50), "^", this.singleML);
 
             this.name = data[9][global % indexer[9]].Trim(); //check number
             this.boolean = global % 2 == 0; //alternate bool value
@@ -79,6 +80,7 @@ namespace loadTestingPhysicalCreator {
             this.parentBC = "B-" + parentId.ToString("D10");
             this.rfid = (global + 2000001).ToString("X24");
 
+            this.global = global;
             if (global % 4 == 0) {
                 this.storType = "Active Storage";
                 this.storName = this.activeStorage;

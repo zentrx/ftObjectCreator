@@ -91,7 +91,7 @@ namespace loadTestingPhysicalCreator
             try {
                 List<Task> tasks = new List<Task>();
                 tasks.Add(Task.Factory.StartNew(() => Produce()));
-                for (int i = 0; i < numberGenerated / 100000; i++) {
+                for (int i = 0; i < numberGenerated / 30; i++) {
                     tasks.Add(Task.Factory.StartNew(() => Consume()));
                 }
                 Task.WaitAll(tasks.ToArray());
@@ -100,7 +100,8 @@ namespace loadTestingPhysicalCreator
             catch (ThreadInterruptedException e) { Console.WriteLine(e); }
         }
         public void Percentage(int current, int total) {
-            Console.WriteLine(String.Concat((current / total).ToString("p1"), " completed...", Environment.NewLine));
+            double val = current / total;
+            Console.WriteLine(String.Concat(((double)(( current * 100 )/ total)).ToString("00.##"), "% completed...", Environment.NewLine));
         }
     }
     public delegate void AsyncGenerate();

@@ -16,6 +16,12 @@ namespace loadTestingPhysicalCreator
     class FolderCreator : PhysicalCreator
     {
         public ConcurrentQueue<Folder> qFoldersToAdd = new ConcurrentQueue<Folder>();
+        public FolderCreator() {
+            this.fileName = "\\Folder_LoadTest_1.csv";
+            this.table = "folders";
+            this.numberGenerated = 5000000;
+        }
+
         public override string Structure()
         {
             StringBuilder structure = new StringBuilder();
@@ -41,7 +47,7 @@ namespace loadTestingPhysicalCreator
 
             //folder specific
             structure.Append("volume int, ");
-            structure.Append("bool tinyint, ");
+            structure.Append("bool bit, ");
             structure.Append("name nvarchar(max), ");
             structure.Append("phone nvarchar(50), ");
             structure.Append("multiCom nvarchar(255), ");
@@ -54,15 +60,10 @@ namespace loadTestingPhysicalCreator
             structure.Append("storName nvarchar(255), ");
 
             //primary keys
-            structure.Append("primary key (org), ");
-            structure.Append("primary key (cat), ");
-            structure.Append("primary key (med), ");
-            structure.Append("primary key (singleML)");
-            structure.Append("primary key (volume)");
+            structure.Append("primary key (org, cat, med, singleML, volume), ");
 
             return structure.ToString();
         }
-
         public override void Produce() {
             Random gen = new Random();
             DateTime start = new DateTime(1990, 1, 1);

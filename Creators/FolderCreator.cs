@@ -19,7 +19,7 @@ namespace loadTestingPhysicalCreator
         public FolderCreator() {
             this.fileName = "\\Folder_LoadTest_1.csv";
             this.table = "folders";
-            this.numberGenerated = 5000000;
+            this.numberGenerated = 78000000;
         }
 
         public override string Structure()
@@ -98,11 +98,12 @@ namespace loadTestingPhysicalCreator
 
                 StringBuilder sql = new StringBuilder();
                 Folder fldr = new Folder();
+                SqlCommand cmd = new SqlCommand("", conn);
                 int waitCounts = 0;
                 while (true) {
-                    if (qFoldersToAdd.TryDequeue(out fldr)) {
-                        try {
-                            sql = new StringBuilder();
+                    sql.Clear();
+                    for (int i = 0; i < 500; i++) { 
+                        if (qFoldersToAdd.TryDequeue(out fldr)) {
                             sql.Append("insert into folders (usr, org, cat, med, inactiveStor, activeStor, barcode, parentBarcode, rfid, fileDate, description, memo1, storType, ");
                             sql.Append("storName, volume, singleCom, multiCom, bool, name, phone, singleML, multiML) ").Append(Environment.NewLine);
                             sql.Append("Values ('").Append(fldr.username).Append("', '").Append(fldr.org).Append("', '").Append(fldr.cat).Append("', '").Append(fldr.med).Append("', '");
@@ -110,27 +111,30 @@ namespace loadTestingPhysicalCreator
                             sql.Append(fldr.rfid).Append("', '").Append(fldr.fileDate).Append("', '").Append(fldr.description).Append("', '").Append(fldr.memo1).Append("', '");
                             sql.Append(fldr.storType).Append("', '").Append(fldr.storName).Append("', '").Append(fldr.volume).Append("', '").Append(fldr.singleCom).Append("', '");
                             sql.Append(fldr.multiCom).Append("', '").Append(fldr.boolean.ToString()).Append("', '").Append(fldr.name).Append("', '").Append(fldr.phone).Append("', '");
-                            sql.Append(fldr.singleML).Append("', '").Append(fldr.multiML).Append("');").Append(Environment.NewLine);
-
-                            SqlCommand cmd = new SqlCommand(sql.ToString(), conn);
-                            cmd.ExecuteNonQuery();
-                            percent++;
-                            if (percent % 100000 == 0) Percentage(percent, this.numberGenerated);
+                            sql.Append(fldr.singleML).Append("', '").Append(fldr.multiML).Append("'); ");
+                            waitCounts = 0;
+                            percent = fldr.global;
                         }
-                        catch (Exception e) { Console.WriteLine(e.ToString()); }
-                    }
-                    else {
-                        if (waitCounts <= 3) {
-                            Thread.Sleep(2000);
-                            waitCounts += 1;
+                        else {
+                            if (waitCounts <= 3) {
+                                Thread.Sleep(2000);
+                                waitCounts += 1;
+                            }
+                            else {
+                                waitCounts = 0;
+                                break;
+                            }
                         }
-                        else break;
                     }
+                
+                    try {
+                        cmd.CommandText = sql.ToString();
+                        cmd.ExecuteNonQuery();
+                        if(percent % 10 == 0) Percentage(percent, this.numberGenerated);
+                   }
+                   catch (Exception e) { Console.WriteLine(e.ToString()); }
                 }
-                conn.Close();
             }
         }
-
-
     }
 }
